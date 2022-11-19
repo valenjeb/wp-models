@@ -1,0 +1,43 @@
+{
+  "name": "devly/wp-models",
+  "description": "A collection of models asbtracting WordPress objects.",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "Devly\\WP\\Models\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Devly\\WP\\Models\\Tests\\": "tests/integration"
+    }
+  },
+  "require": {
+    "php": "^7.4",
+    "devly/utils": "dev-master",
+    "devly/wp-query": "dev-master",
+    "illuminate/collections": "^8.83"
+  },
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
+    "devly/coding-standard": "^1.0",
+    "phpstan/phpstan": "^1.9",
+    "phpunit/phpunit": "^9.5",
+    "szepeviktor/phpstan-wordpress": "^1.1",
+    "yoast/phpunit-polyfills": "^1.0"
+  },
+  "scripts": {
+    "lint": "@php ./vendor/bin/phpcs",
+    "lint:fix": "@php ./vendor/bin/phpcbf",
+    "analyze": "@php ./vendor/bin/phpstan",
+    "test": "@php ./vendor/bin/phpunit --testdox --colors=always",
+    "test:multisite": "@php ./vendor/bin/phpunit --testdox --colors=always -c phpunit.multisite.xml"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  }
+}

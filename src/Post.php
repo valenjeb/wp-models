@@ -334,18 +334,29 @@ class Post
     }
 
     /**
-     * Retrieve formatted date string or Unix timestamp on which the post was written.
+     * Retrieve formatted time string or Unix timestamp on which the post was written.
      *
      * @param string $format Format to use for retrieving the time the post was written.
      *                       Accepts 'G', 'U', or PHP date format. Defaults to the
      *                       'time_format' option.
+     *
+     * @return string|int
      */
-    public function getTime(string $format = ''): string
+    public function getTime(string $format = '')
     {
         return get_the_time($format, $this->getCoreObject());
     }
 
-    public function getTimeModified(string $format = ''): string
+    /**
+     * Retrieve formatted modified time string or Unix timestamp on which the post was written.
+     *
+     * @param string $format Format to use for retrieving the time the post was written.
+     *                       Accepts 'G', 'U', or PHP date format. Defaults to the
+     *                       'time_format' option.
+     *
+     * @return string|int
+     */
+    public function getTimeModified(string $format = '')
     {
         return get_the_modified_time($format, $this->getCoreObject());
     }
@@ -354,8 +365,10 @@ class Post
      * Retrieve formatted date on which the post was written
      *
      * @param string $format PHP date format. Defaults to the 'date_format' option.
+     *
+     * @return string|int
      */
-    public function getDate(string $format = ''): string
+    public function getDate(string $format = '')
     {
         return get_the_date($format, $this->getCoreObject());
     }
@@ -367,8 +380,10 @@ class Post
 
     /**
      * Alias to getDate()
+     *
+     * @return string|int
      */
-    public function getCreateDate(string $format = ''): string
+    public function getCreateDate(string $format = '')
     {
         return $this->getDate($format);
     }
@@ -377,6 +392,8 @@ class Post
      * Retrieve formatted date on which the post was last modified.
      *
      * @param string $format PHP date format. Defaults to the 'date_format' option.
+     *
+     * @return string|int
      */
     public function getModifiedDate(string $format = ''): string
     {

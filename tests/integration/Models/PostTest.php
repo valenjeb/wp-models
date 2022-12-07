@@ -227,4 +227,10 @@ class PostTest extends WP_UnitTestCase
         $this->assertEquals('post', $this->post->type);
         $this->assertTrue($this->post->is('post'));
     }
+
+    public function testGetTime(): void
+    {
+        $this->assertIsInt($this->post->getTime('U'));
+        $this->assertIsInt($this->post->getTimeModified('U'));
+    }
 }

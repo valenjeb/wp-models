@@ -19,19 +19,24 @@ use function preg_match;
 
 class PostTest extends WP_UnitTestCase
 {
-    protected Post $post;
+    protected ?Post $post;
+    /**
+     * @var int[]
+     */
+    protected array $posts;
 
     protected function setUp(): void
     {
-        $post = $this->factory()->post->create_many(4);
+        $posts = $this->factory()->post->create_many(4);
 
         wp_update_post([
-            'ID' => $post[2],
+            'ID' => $posts[2],
             'post_author' => 1,
-            'post_parent' => $post[1],
+            'post_parent' => $posts[1],
         ]);
 
-        $this->post = new Post($post[2]);
+        $this->posts = $posts;
+        $this->post = new Post($posts[2]);
     }
 
     public function testInsertAndDeletePost(): void
@@ -215,5 +220,11 @@ class PostTest extends WP_UnitTestCase
         $this->assertInstanceOf(Post::class, $this->post->setThumbnail($attachment));
         $this->assertInstanceOf(Attachment::class, $this->post->thumbnail);
         $this->assertTrue($this->post->hasThumbnail());
+    }
+
+    public function testGetType(): void
+    {
+        $this->assertEquals('post', $this->post->type);
+        $this->assertTrue($this->post->is('post'));
     }
 }

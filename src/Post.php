@@ -46,6 +46,7 @@ use function wp_insert_post;
  * @property-read int $ID
  * @property-read string $raw_title The raw post title as stored in the database.
  * @property-read string $title The post title
+ * @property-read string $type The post type
  * @property-read string $slug The URL-safe slug, this corresponds to the poorly-named "post_name" in the WP database, ex: "hello-world"
  * @property-read string $status The post status
  * @property-read string $raw_date  DateTime string (0000-00-00 00:00:00)
@@ -137,6 +138,27 @@ class Post
         }
 
         $this->coreObject = $_post;
+    }
+
+    /**
+     * Retrieves the post type
+     *
+     * @return string
+     */
+    public function getType(): string
+    {
+        return self::$postType;
+    }
+
+    /**
+     * Determines whether the post type equals the specified type.
+     *
+     * @param string $type
+     * @return bool
+     */
+    public function is(string $type): bool
+    {
+        return $this->getType() === $type;
     }
 
     public function getID(): int
@@ -387,10 +409,12 @@ class Post
     {
         // @phpstan-ignore-next-line
         if (! isset($this->previousPost)) {
-            $_post           = $GLOBALS['post'];
+            $_post           = $GLOBALS['post'] ?? null;
             $GLOBALS['post'] = $this->getCoreObject();
             $previous        = get_previous_post($sameTerm, $excluded, $taxonomy);
-            $GLOBALS['post'] = $_post;
+            if ($_post) {
+                $GLOBALS['post'] = $_post;
+            }
 
             $this->previousPost = ! empty($previous) ? new Post($previous) : false;
         }
@@ -411,10 +435,12 @@ class Post
     {
         // @phpstan-ignore-next-line
         if (! isset($this->nextPost)) {
-            $_post           = $GLOBALS['post'];
+            $_post           = $GLOBALS['post'] ?? null;
             $GLOBALS['post'] = $this->getCoreObject();
             $next            = get_next_post($sameTerm, $excluded, $taxonomy);
-            $GLOBALS['post'] = $_post;
+            if ($_post) {
+                $GLOBALS['post'] = $_post;
+            }
 
             $this->nextPost = ! empty($next) ? new Post($next) : false;
         }

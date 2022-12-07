@@ -37,4 +37,21 @@ class TermTest extends WP_UnitTestCase
 
         $this->assertEquals('Uncategorized', $cat->name);
     }
+
+    public function testTermLink(): void
+    {
+        $cat = Category::getById(1);
+
+        $expected = 'http://example.org/?cat=1';
+        $this->assertEquals($expected, $cat->getLink());
+        $this->assertEquals($expected, $cat->link);
+        $this->assertEquals($expected, $cat->url);
+    }
+
+    public function testTermTaxonomy(): void
+    {
+        $cat = Category::getById(1);
+
+        $this->assertEquals('category', $cat->getTaxonomy());
+    }
 }

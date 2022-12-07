@@ -19,13 +19,15 @@ use function str_replace;
 use function ucfirst;
 
 /**
- * @property-read int $ID
- * @property-read string $name
- * @property-read string $description
- * @property-read string $slug
- * @property-read int $count
- * @property-read int $parent_id
- * @property-read ?Term $parent
+ * @property-read int $ID The term ID
+ * @property-read string $name The term name
+ * @property-read string $description The term description
+ * @property-read string $slug The term slug
+ * @property-read string $link The term URL
+ * @property-read string $url The term URL
+ * @property-read int $count The term associated objects count
+ * @property-read int $parent_id The term parent ID
+ * @property-read ?Term $parent The term parent object
  */
 class Term
 {
@@ -71,6 +73,11 @@ class Term
         $this->coreObject = $term;
     }
 
+    public function getTaxonomy(): string
+    {
+        return static::$taxonomy;
+    }
+
     public function getID(): int
     {
         return $this->getCoreObject()->term_id;
@@ -84,6 +91,24 @@ class Term
     public function getDescription(): string
     {
         return $this->getCoreObject()->description;
+    }
+
+    /** @throws RuntimeException */
+    public function getLink(): string
+    {
+        $link = get_term_link($this->getCoreObject());
+
+        if ($link instanceof WP_Error) {
+            throw new RuntimeException($link->get_error_message());
+        }
+
+        return $link;
+    }
+
+    /** @throws RuntimeException */
+    public function getUrl(): string
+    {
+        return $this->getLink();
     }
 
     public function getSlug(): string

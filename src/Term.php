@@ -6,6 +6,8 @@ namespace Devly\WP\Models;
 
 use Devly\Exceptions\ObjectNotFoundException;
 use Devly\Utils\SmartObject;
+use Devly\WP\Query\TermQuery;
+use Illuminate\Support\Collection;
 use LogicException;
 use RuntimeException;
 use WP_Error;
@@ -13,6 +15,8 @@ use WP_Term;
 
 use function is_int;
 use function sprintf;
+use function str_replace;
+use function ucfirst;
 
 /**
  * @property-read int $ID
@@ -193,5 +197,78 @@ class Term
     {
         $this->termParent = null;
         $this->coreObject = get_term($this->getID());
+    }
+
+    public static function all(bool $format = true): Collection
+    {
+        return self::query()
+            ->hideEmpty(false)
+            ->get($format ? static::class : null);
+    }
+
+    /** @param int|int[] $id */
+    public static function getById($id, bool $format = true): Term
+    {
+        $results = self::query()
+            ->whereIdIn($id)
+            ->limit(1)
+            ->hideEmpty(false)
+            ->get($format ? static::class : null);
+
+        if ($results->isEmpty()) {
+            throw new ObjectNotFoundException(sprintf(
+                '%s ID: [%d] not found in database.',
+                ucfirst(str_replace(['_', '-'], ' ', static::$taxonomy)),
+                $id
+            ));
+        }
+
+        return $results[0];
+    }
+
+    /** @throws ObjectNotFoundException */
+    public static function getByName(string $name, bool $format = true): Term
+    {
+        $results = self::query()
+            ->whereName($name)
+            ->limit(1)
+            ->hideEmpty(false)
+            ->get($format ? static::class : null);
+
+        if ($results->isEmpty()) {
+            throw new ObjectNotFoundException(sprintf(
+                '%s name: "%s" not found in database.',
+                ucfirst(str_replace(['_', '-'], '', static::$taxonomy)),
+                $name
+            ));
+        }
+
+        return $results[0];
+    }
+
+    /** @throws ObjectNotFoundException */
+    public static function getBySlug(string $slug, bool $format = true): Term
+    {
+        $results = self::query()
+            ->whereSlug($slug)
+            ->hideEmpty(false)
+            ->limit(1)
+            ->get($format ? static::class : null);
+
+        if ($results->isEmpty()) {
+            throw new ObjectNotFoundException(sprintf(
+                '%s slug: "%s" not found in database.',
+                ucfirst(str_replace(['_', '-'], '', static::$taxonomy)),
+                $slug
+            ));
+        }
+
+        return $results[0];
+    }
+
+    /** @param array<string, mixed> $query */
+    public static function query(array $query = []): TermQuery
+    {
+        return TermQuery::create($query)->whereTaxonomy(static::$taxonomy);
     }
 }

@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/valenjeb/php-utils.git",
-                "reference": "02b688043dba0fb9993e06cdc325b0682321dcc1"
+                "reference": "fa248c1b9c738f4f377ef29abed61c52e63ded2a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/valenjeb/php-utils/zipball/02b688043dba0fb9993e06cdc325b0682321dcc1",
-                "reference": "02b688043dba0fb9993e06cdc325b0682321dcc1",
+                "url": "https://api.github.com/repos/valenjeb/php-utils/zipball/fa248c1b9c738f4f377ef29abed61c52e63ded2a",
+                "reference": "fa248c1b9c738f4f377ef29abed61c52e63ded2a",
                 "shasum": ""
             },
             "require": {
@@ -46,7 +46,7 @@
                 "issues": "https://github.com/valenjeb/php-utils/issues",
                 "source": "https://github.com/valenjeb/php-utils/tree/master"
             },
-            "time": "2022-11-19T19:57:29+00:00"
+            "time": "2022-11-29T22:28:07+00:00"
         },
         {
             "name": "devly/wp-query",

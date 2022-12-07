@@ -54,6 +54,7 @@ use function wp_insert_post;
  * @property-read string $create_date
  * @property-read string $modified_date
  * @property-read string $time
+ * @property-read string $time_modified
  * @property-read string $raw_content The raw post content as stored in the database.
  * @property-read string $content The post content.
  * @property-read string $raw_excerpt The raw post excerpt as stored in the database.
@@ -342,6 +343,11 @@ class Post
     public function getTime(string $format = ''): string
     {
         return get_the_time($format, $this->getCoreObject());
+    }
+
+    public function getTimeModified(string $format = ''): string
+    {
+        return get_the_modified_time($format, $this->getCoreObject());
     }
 
     /**

@@ -72,6 +72,26 @@ class Term
         return $this->getCoreObject()->term_id;
     }
 
+    public function getName(): string
+    {
+        return $this->getCoreObject()->name;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->getCoreObject()->description;
+    }
+
+    public function getSlug(): string
+    {
+        return $this->getCoreObject()->slug;
+    }
+
+    public function getCount(): int
+    {
+        return $this->getCoreObject()->count;
+    }
+
     public function getParentId(): ?int
     {
         return $this->getCoreObject()->parent ?: null;

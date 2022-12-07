@@ -101,6 +101,29 @@ class PostTest extends WP_UnitTestCase
         $this->assertIsInt($this->post->modified_timestamp);
     }
 
+    public function testGetDateW3C(): void
+    {
+        $this->assertMatchesRegularExpression(
+            '/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\+[0-9]{2}:[0-9]{2}/',
+            $this->post->getCreateDateW3c()
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\+[0-9]{2}:[0-9]{2}/',
+            $this->post->create_date_w3c
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\+[0-9]{2}:[0-9]{2}/',
+            $this->post->getModifiedDateW3c()
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\+[0-9]{2}:[0-9]{2}/',
+            $this->post->modified_date_w3c
+        );
+    }
+
     public function testGetPostAuthor(): void
     {
         $author = $this->post->author;

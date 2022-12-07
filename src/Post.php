@@ -51,12 +51,15 @@ use function wp_insert_post;
  * @property-read string $status The post status
  * @property-read string $raw_date  DateTime string (0000-00-00 00:00:00)
  * @property-read string $raw_modified_date  DateTime string (0000-00-00 00:00:00)
- * @property-read string $create_date
- * @property-read string $modified_date
- * @property-read int $create_timestamp
- * @property-read int $modified_timestamp
- * @property-read string $time
- * @property-read string $time_modified
+ * @property-read string $date The formatted post create date
+ * @property-read string $create_date The formatted post create date
+ * @property-read string $create_date_w3c The post create date (0000-00-00T00:00:00+00:00)
+ * @property-read string $modified_date The formatted post modified date
+ * @property-read string $modified_date_w3c The post modified date (0000-00-00T00:00:00+00:00)
+ * @property-read int $create_timestamp The post create timestamp
+ * @property-read int $modified_timestamp The post modified timestamp
+ * @property-read string $time The formatted post create time
+ * @property-read string $time_modified The formatted post modified time
  * @property-read string $raw_content The raw post content as stored in the database.
  * @property-read string $content The post content.
  * @property-read string $raw_excerpt The raw post excerpt as stored in the database.
@@ -389,6 +392,23 @@ class Post
     {
         return $this->getDate($format);
     }
+
+    /**
+     * Returns the post create date in "Y-m-d\TH:i:sP" format
+     */
+    public function getCreateDateW3c(): string
+    {
+        return $this->getDate(DATE_W3C);
+    }
+
+    /**
+     * Returns the post modified date in "Y-m-d\TH:i:sP" format
+     */
+    public function getModifiedDateW3c(): string
+    {
+        return $this->getCreateDate(DATE_W3C);
+    }
+
 
     public function getCreateTimestamp(): int
     {

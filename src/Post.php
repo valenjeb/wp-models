@@ -70,7 +70,7 @@ use function wp_insert_post;
  * @property-read ?Post $next_post
  * @property-read int $comment_count
  * @property-read string $comment_status
- * @property-read bool $comment_open
+ * @property-read bool $comments_open
  * @property-read string $format
  * @property-read Collection<Category> $categories
  * @property-read Collection<Tag> $tags

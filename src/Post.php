@@ -53,6 +53,8 @@ use function wp_insert_post;
  * @property-read string $raw_modified_date  DateTime string (0000-00-00 00:00:00)
  * @property-read string $create_date
  * @property-read string $modified_date
+ * @property-read int $create_timestamp
+ * @property-read int $modified_timestamp
  * @property-read string $time
  * @property-read string $time_modified
  * @property-read string $raw_content The raw post content as stored in the database.
@@ -388,6 +390,16 @@ class Post
         return $this->getDate($format);
     }
 
+    public function getCreateTimestamp(): int
+    {
+        return $this->getDate('U');
+    }
+
+    public function getModifiedTimestamp(): int
+    {
+        return $this->getModifiedDate('U');
+    }
+
     /**
      * Retrieve formatted date on which the post was last modified.
      *
@@ -395,7 +407,7 @@ class Post
      *
      * @return string|int
      */
-    public function getModifiedDate(string $format = ''): string
+    public function getModifiedDate(string $format = '')
     {
         return get_the_modified_date($format, $this->getCoreObject());
     }

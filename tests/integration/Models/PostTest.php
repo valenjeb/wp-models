@@ -95,6 +95,12 @@ class PostTest extends WP_UnitTestCase
         $this->assertEquals('publish', $this->post->status);
     }
 
+    public function testGetTimestamp(): void
+    {
+        $this->assertIsInt($this->post->create_timestamp);
+        $this->assertIsInt($this->post->modified_timestamp);
+    }
+
     public function testGetPostAuthor(): void
     {
         $author = $this->post->author;

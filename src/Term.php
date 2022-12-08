@@ -29,7 +29,7 @@ use function ucfirst;
  * @property-read int $parent_id The term parent ID
  * @property-read ?Term $parent The term parent object
  */
-class Term
+abstract class Term
 {
     use SmartObject;
 

@@ -54,4 +54,13 @@ class TermTest extends WP_UnitTestCase
 
         $this->assertEquals('category', $cat->getTaxonomy());
     }
+
+    public function testInsertTerm(): void
+    {
+        $cat = Category::insert('Test category');
+
+        $this->assertInstanceOf(Category::class, $cat);
+        $this->assertEquals('Test category', $cat->name);
+        $this->assertEquals('test-category', $cat->slug);
+    }
 }

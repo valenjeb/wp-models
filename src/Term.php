@@ -224,6 +224,26 @@ class Term
         $this->coreObject = get_term($this->getID());
     }
 
+    public static function insert(string $name): self
+    {
+        switch (static::$taxonomy) {
+            case Category::$taxonomy:
+                $result = wp_create_category($name);
+                break;
+            case Tag::$taxonomy:
+                $result = wp_create_tag($name);
+                break;
+            default:
+                $result = wp_create_term($name, static::$taxonomy);
+        }
+
+        if ($result instanceof WP_Error) {
+            throw new RuntimeException($result->get_error_message());
+        }
+
+        return static::getByName($name);
+    }
+
     public static function all(bool $format = true): Collection
     {
         return self::query()

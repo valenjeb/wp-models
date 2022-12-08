@@ -13,6 +13,7 @@ use RuntimeException;
 use WP_Error;
 use WP_Term;
 
+use function is_bool;
 use function is_int;
 use function sprintf;
 use function str_replace;
@@ -47,35 +48,30 @@ abstract class Term
      */
     public function __construct($term)
     {
-        $term = get_term($term);
+        $term = get_term($term, self::getTaxonomy());
 
         if ($term instanceof WP_Error) {
-            throw new ObjectNotFoundException($term->get_error_message());
+            throw new RuntimeException($term->get_error_message());
         }
 
         if ($term === null) {
-            throw new RuntimeException();
+            throw new ObjectNotFoundException(sprintf(
+                '%s id: %d not found in database.',
+                self::getTaxonomy(),
+                $term
+            ));
         }
 
-        if (! isset(static::$taxonomy)) {
-            static::$taxonomy = $term->taxonomy;
-        }
-
-        if (static::$taxonomy !== $term->taxonomy) {
+        if (self::getTaxonomy() !== $term->taxonomy) {
             throw new LogicException(sprintf(
                 'Term "%d" is a "%s" not a "%s". Make sure to use the correct model.',
                 $term->term_id,
-                static::$taxonomy,
+                self::getTaxonomy(),
                 $term->taxonomy
             ));
         }
 
         $this->coreObject = $term;
-    }
-
-    public function getTaxonomy(): string
-    {
-        return static::$taxonomy;
     }
 
     public function getID(): int
@@ -224,17 +220,47 @@ abstract class Term
         $this->coreObject = get_term($this->getID());
     }
 
+    public static function getTaxonomy(): string
+    {
+        if (isset(static::$taxonomy)) {
+            return static::$taxonomy;
+        }
+
+        if (static::class === self::class) {
+            throw new LogicException(sprintf('The base "%s" object should not be called directly.', self::class));
+        }
+
+        throw new LogicException(sprintf('The required %s::$taxonomy parameter is not defined.', self::class));
+    }
+
+    public static function delete(int $id): bool
+    {
+        $result = wp_delete_term($id, self::getTaxonomy());
+
+        if (is_bool($result)) {
+            return $result;
+        }
+
+        if ($result instanceof WP_Error) {
+            $err = $result->get_error_message();
+        } else {
+            $err = 'The default WordPress category can not be deleted.';
+        }
+
+        throw new RuntimeException($err);
+    }
+
     public static function insert(string $name): self
     {
-        switch (static::$taxonomy) {
-            case Category::$taxonomy:
+        switch (self::getTaxonomy()) {
+            case Category::getTaxonomy():
                 $result = wp_create_category($name);
                 break;
-            case Tag::$taxonomy:
+            case Tag::getTaxonomy():
                 $result = wp_create_tag($name);
                 break;
             default:
-                $result = wp_create_term($name, static::$taxonomy);
+                $result = wp_create_term($name, self::getTaxonomy());
         }
 
         if ($result instanceof WP_Error) {
@@ -251,69 +277,68 @@ abstract class Term
             ->get($format ? static::class : null);
     }
 
-    /** @param int|int[] $id */
-    public static function getById($id, bool $format = true): Term
+    /**
+     * @param int|int[] $id
+     *
+     * @return Collection<static>|static
+     *
+     * @throws ObjectNotFoundException
+     */
+    public static function getById($id)
     {
-        $results = self::query()
-            ->whereIdIn($id)
-            ->limit(1)
-            ->hideEmpty(false)
-            ->get($format ? static::class : null);
-
-        if ($results->isEmpty()) {
-            throw new ObjectNotFoundException(sprintf(
-                '%s ID: [%d] not found in database.',
-                ucfirst(str_replace(['_', '-'], ' ', static::$taxonomy)),
-                $id
-            ));
+        if (is_int($id)) {
+            return new static($id);
         }
 
-        return $results[0];
+        return self::query()
+            ->whereIdIn($id)
+            ->hideEmpty(false)
+            ->get(static::class);
     }
 
     /** @throws ObjectNotFoundException */
-    public static function getByName(string $name, bool $format = true): Term
+    public static function getByName(string $name): Term
     {
-        $results = self::query()
-            ->whereName($name)
-            ->limit(1)
-            ->hideEmpty(false)
-            ->get($format ? static::class : null);
+        $term = get_term_by('name', $name, self::getTaxonomy());
 
-        if ($results->isEmpty()) {
+        if ($term === false) {
             throw new ObjectNotFoundException(sprintf(
                 '%s name: "%s" not found in database.',
-                ucfirst(str_replace(['_', '-'], '', static::$taxonomy)),
+                ucfirst(str_replace(['_', '-'], '', self::getTaxonomy())),
                 $name
             ));
         }
 
-        return $results[0];
+        if ($term instanceof WP_Error) {
+            throw new RuntimeException($term->get_error_message());
+        }
+
+        return new static($term);
     }
 
     /** @throws ObjectNotFoundException */
-    public static function getBySlug(string $slug, bool $format = true): Term
+    public static function getBySlug(string $slug): Term
     {
-        $results = self::query()
-            ->whereSlug($slug)
-            ->hideEmpty(false)
-            ->limit(1)
-            ->get($format ? static::class : null);
+        $term = get_term_by('slug', $slug, self::getTaxonomy());
 
-        if ($results->isEmpty()) {
+        if ($term === false) {
             throw new ObjectNotFoundException(sprintf(
                 '%s slug: "%s" not found in database.',
-                ucfirst(str_replace(['_', '-'], '', static::$taxonomy)),
+                ucfirst(str_replace(['_', '-'], '', self::getTaxonomy())),
                 $slug
             ));
         }
 
-        return $results[0];
+        if ($term instanceof WP_Error) {
+            throw new RuntimeException($term->get_error_message());
+        }
+
+        return new static($term);
     }
 
     /** @param array<string, mixed> $query */
     public static function query(array $query = []): TermQuery
     {
-        return TermQuery::create($query)->whereTaxonomy(static::$taxonomy);
+        return TermQuery::create($query)->whereTaxonomy(self::getTaxonomy());
     }
 }

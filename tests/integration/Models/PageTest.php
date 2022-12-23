@@ -18,4 +18,11 @@ class PageTest extends WP_UnitTestCase
         $page   = new Page($pageID);
         $this->assertInstanceOf(Post::class, $page);
     }
+
+    public function testGetUsingMagicProperty(): void
+    {
+        $pageID = $this->factory()->post->create(['post_type' => 'page', 'post_title' => 'Sample Post']);
+        $page   = new Page($pageID);
+        $this->assertEquals('Sample Post', $page->title);
+    }
 }

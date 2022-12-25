@@ -894,7 +894,10 @@ class Post
 
     public static function query(): PostQuery
     {
-        return new PostQuery(['post_type' => static::$postType]);
+        $query = PostQuery::create(['post_type' => static::$postType]);
+        $query->setReturnType(static::class);
+
+        return $query;
     }
 
     public static function where(): PostQuery

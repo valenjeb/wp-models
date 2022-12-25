@@ -11,6 +11,7 @@ use RuntimeException;
 use WP_Error;
 use WP_Post;
 
+use function explode;
 use function pathinfo;
 use function sprintf;
 
@@ -210,6 +211,99 @@ class Attachment
     public function getMimeType(): string
     {
         return get_post_mime_type($this->getCoreObject()) ?: '';
+    }
+
+    /**
+     * Get an HTML output representing the attachment.
+     *
+     * @param array<string, mixed> $attr
+     */
+    public function html(array $attr = []): string
+    {
+        $type = explode('/', $this->getMimeType())[0];
+        if ($type === 'video') {
+            return $this->video($attr);
+        }
+
+        if ($type === 'audio') {
+            return $this->audio($attr);
+        }
+
+        if ($type === 'image') {
+            $size = 'full';
+            if (isset($attr['size'])) {
+                $size = $attr['size'];
+                unset($attr['size']);
+            }
+
+            return $this->image($size, $attr);
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns an HTML video player representing a video attachment.
+     *
+     * This implements the functionality of the Video Shortcode
+     * for displaying WordPress mp4s in a post.
+     *
+     * @param array<string, mixed> $attr
+     *
+     * @throws RuntimeException
+     */
+    public function video(array $attr = []): string
+    {
+        $type = explode('/', $this->getMimeType())[0];
+
+        if ($type !== 'video') {
+            throw new RuntimeException(sprintf('Attachment [%s] is not a video file.', $this->getUrl()));
+        }
+
+        $attr['src'] = $this->getUrl();
+
+        return wp_video_shortcode($attr);
+    }
+
+    /**
+     * Returns an HTML audio player representing an audio attachment.
+     *
+     * This implements the functionality of the Audio Shortcode
+     * for displaying WordPress mp3s in a post.
+     *
+     * @param array<string, mixed> $attr
+     *
+     * @throws RuntimeException
+     */
+    public function audio(array $attr = []): string
+    {
+        $type = explode('/', $this->getMimeType())[0];
+
+        if ($type !== 'audio') {
+            throw new RuntimeException(sprintf('Attachment [%s] is not a audio file.', $this->getUrl()));
+        }
+
+        $attr['src'] = $this->getUrl();
+
+        return wp_audio_shortcode($attr);
+    }
+
+    /**
+     * Returns an HTML img element representing an image attachment.
+     *
+     * @param array<string, mixed> $attr
+     *
+     * @throws RuntimeException
+     */
+    public function image(string $size = 'full', array $attr = []): string
+    {
+        $type = explode('/', $this->getMimeType())[0];
+
+        if ($type !== 'image') {
+            throw new RuntimeException(sprintf('Attachment [%s] is not an image file.', $this->getUrl()));
+        }
+
+        return wp_get_attachment_image($this->getID(), $size, false, $attr);
     }
 
     /**

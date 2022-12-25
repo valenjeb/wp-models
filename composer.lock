@@ -54,12 +54,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/valenjeb/wp-query.git",
-                "reference": "63172fe7d76d5029a16a75bc609db46393b4935a"
+                "reference": "9ec1586008894bb88f26bba89925e61eb5ceb167"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/valenjeb/wp-query/zipball/63172fe7d76d5029a16a75bc609db46393b4935a",
-                "reference": "63172fe7d76d5029a16a75bc609db46393b4935a",
+                "url": "https://api.github.com/repos/valenjeb/wp-query/zipball/9ec1586008894bb88f26bba89925e61eb5ceb167",
+                "reference": "9ec1586008894bb88f26bba89925e61eb5ceb167",
                 "shasum": ""
             },
             "require": {
@@ -72,7 +72,8 @@
                 "devly/coding-standard": "^1.0",
                 "phpstan/phpstan": "^1.9",
                 "phpunit/phpunit": "^9.5",
-                "szepeviktor/phpstan-wordpress": "^1.1"
+                "szepeviktor/phpstan-wordpress": "^1.1",
+                "yoast/phpunit-polyfills": "^1.0"
             },
             "default-branch": true,
             "type": "library",
@@ -87,7 +88,7 @@
                 "issues": "https://github.com/valenjeb/wp-query/issues",
                 "source": "https://github.com/valenjeb/wp-query/tree/master"
             },
-            "time": "2022-11-19T21:32:12+00:00"
+            "time": "2022-12-25T11:47:18+00:00"
         },
         {
             "name": "illuminate/collections",

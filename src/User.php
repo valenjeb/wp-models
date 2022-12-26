@@ -6,9 +6,9 @@ namespace Devly\WP\Models;
 
 use Devly\Exceptions\ObjectNotFoundException;
 use Devly\Utils\SmartObject;
-use Exception;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
+use RuntimeException;
 use WP_Error;
 use WP_User;
 
@@ -316,14 +316,14 @@ class User
      * @param array<string, mixed>|object|WP_User $options An array, object, or WP_User
      *                                                     object of user data arguments.
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public static function insert($options): self
     {
         $user = @wp_insert_user($options);
 
         if ($user instanceof WP_Error) {
-            throw new Exception($user->get_error_message());
+            throw new RuntimeException($user->get_error_message());
         }
 
         return new self($user);
@@ -334,14 +334,14 @@ class User
      *
      * For more complex user creation use User::insert() to specify more information.
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public static function create(string $username, string $password, string $email = ''): self
     {
         $user = @wp_create_user($username, $password, $email);
 
         if ($user instanceof WP_Error) {
-            throw new Exception($user->get_error_message());
+            throw new RuntimeException($user->get_error_message());
         }
 
         return new self($user);
@@ -402,13 +402,13 @@ class User
      *
      * @return self|WP_User
      *
-     * @throws Exception if no user is logged in.
+     * @throws RuntimeException if no user is logged in.
      */
     public static function getCurrent(bool $format = true)
     {
         $id = get_current_user_id();
         if ($id === 0) {
-            throw new Exception('No user is logged in');
+            throw new RuntimeException('No user is logged in');
         }
 
         if ($format) {

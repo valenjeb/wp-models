@@ -6,8 +6,8 @@ namespace Devly\WP\Models;
 
 use Devly\Exceptions\ObjectNotFoundException;
 use Devly\Utils\SmartObject;
-use Exception;
 use Illuminate\Support\Collection;
+use RuntimeException;
 use WP_Comment;
 use WP_Error;
 
@@ -137,14 +137,14 @@ class Comment
     /**
      * Retrieves the comment status.
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function setStatus(string $status): self
     {
         $res = wp_set_comment_status($this->getCoreObject(), $status, true);
 
         if ($res instanceof WP_Error) {
-            throw new Exception($res->get_error_message());
+            throw new RuntimeException($res->get_error_message());
         }
 
         $this->refreshCoreObject();
@@ -196,12 +196,12 @@ class Comment
     /**
      * Get the comment author
      *
-     * @throws Exception if the comment author is anonymous.
+     * @throws RuntimeException if the comment author is anonymous.
      */
     public function getAuthor(): User
     {
         if ($this->isAnonymous()) {
-            throw new Exception('Can not create User object for anonymous user');
+            throw new RuntimeException('Can not create User object for anonymous user');
         }
 
         return new User($this->getAuthorID());

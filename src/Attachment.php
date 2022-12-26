@@ -6,7 +6,6 @@ namespace Devly\WP\Models;
 
 use Devly\Exceptions\ObjectNotFoundException;
 use Devly\Utils\SmartObject;
-use Exception;
 use RuntimeException;
 use WP_Error;
 use WP_Post;
@@ -84,7 +83,7 @@ class Attachment
     /**
      * @param array<string, mixed> $data
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function update(array $data): bool
     {
@@ -95,7 +94,7 @@ class Attachment
         $result = wp_update_post($data, true);
 
         if ($result instanceof WP_Error) {
-            throw new Exception($result->get_error_message());
+            throw new RuntimeException($result->get_error_message());
         }
 
         $this->refreshCoreObject();

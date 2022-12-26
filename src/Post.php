@@ -10,7 +10,6 @@ use Devly\Exceptions\ObjectNotFoundException;
 use Devly\Utils\Helpers;
 use Devly\Utils\SmartObject;
 use Devly\WP\Query\PostQuery;
-use Exception;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use LogicException;
@@ -41,6 +40,8 @@ use function is_int;
 use function is_object;
 use function sprintf;
 use function wp_insert_post;
+
+use const DATE_W3C;
 
 /**
  * @property-read int $ID
@@ -148,8 +149,6 @@ class Post
 
     /**
      * Retrieves the post type
-     *
-     * @return string
      */
     public function getType(): string
     {
@@ -158,9 +157,6 @@ class Post
 
     /**
      * Determines whether the post type equals the specified type.
-     *
-     * @param string $type
-     * @return bool
      */
     public function is(string $type): bool
     {
@@ -199,7 +195,7 @@ class Post
     {
         try {
             return Helpers::capture(function () use ($moreLinkText, $stripTeaser): void {
-                $post = $GLOBALS['post'] ?? null;
+                $post            = $GLOBALS['post'] ?? null;
                 $GLOBALS['post'] = $this->getCoreObject();
 
                 the_content($moreLinkText, $stripTeaser);
@@ -229,7 +225,7 @@ class Post
     {
         try {
             return Helpers::capture(function (): void {
-                $post = $GLOBALS['post'] ?? null;
+                $post            = $GLOBALS['post'] ?? null;
                 $GLOBALS['post'] = $this->getCoreObject();
 
                 the_excerpt();
@@ -278,7 +274,11 @@ class Post
         $id = $attachment instanceof Attachment || $attachment instanceof WP_Post ? $attachment->ID : $attachment;
 
         if (! is_int($id)) {
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException(sprintf(
+                "Method '%s::%s()' expects an integer, an Attachment or WP_Post instance.",
+                static::class,
+                __METHOD__
+            ));
         }
 
         $this->setField('_thumbnail_id', $id);
@@ -408,7 +408,6 @@ class Post
     {
         return $this->getCreateDate(DATE_W3C);
     }
-
 
     public function getCreateTimestamp(): int
     {
@@ -601,14 +600,14 @@ class Post
      *
      * @param array<string, mixed> $args
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function getTerms(string $taxonomy = 'post_tag', array $args = [], string $return = Term::class): Collection
     {
         $terms = wp_get_post_terms($this->ID, $taxonomy, $args);
 
         if ($terms instanceof WP_Error) {
-            throw new Exception($terms->get_error_message());
+            throw new RuntimeException($terms->get_error_message());
         }
 
         return collect($terms)
@@ -620,14 +619,14 @@ class Post
      *
      * @param int[] $terms
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function setTerms(array $terms, string $taxonomy = 'post_tag'): void
     {
         $res = wp_set_post_terms($this->getID(), $terms, $taxonomy);
 
         if ($res instanceof WP_Error) {
-            throw new Exception($res->get_error_message());
+            throw new RuntimeException($res->get_error_message());
         }
     }
 
@@ -636,14 +635,14 @@ class Post
      *
      * @param int[] $terms
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function addTerms(array $terms, string $taxonomy = 'post_tag'): void
     {
         $res = wp_set_post_terms($this->getID(), $terms, $taxonomy, true);
 
         if ($res instanceof WP_Error) {
-            throw new Exception($res->get_error_message());
+            throw new RuntimeException($res->get_error_message());
         }
     }
 
@@ -652,14 +651,14 @@ class Post
      *
      * @param int[] $terms A term ID or a list of term IDs to remove
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function removeTerms(array $terms, string $taxonomy = 'post_tag'): void
     {
         $res = wp_get_post_terms($this->getID(), $taxonomy);
 
         if ($res instanceof WP_Error) {
-            throw new Exception($res->get_error_message());
+            throw new RuntimeException($res->get_error_message());
         }
 
         foreach ($terms as $term) {
@@ -678,7 +677,7 @@ class Post
      *
      * @param array<string, mixed> $args
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function getCategories(array $args = []): Collection
     {
@@ -690,7 +689,7 @@ class Post
      *
      * @param int|int[] $terms A category ID or a list of category IDs to set
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function setCategories($terms): Collection
     {
@@ -706,7 +705,7 @@ class Post
      *
      * @param int|int[] $terms A category ID or a list of category IDs to remove
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function removeCategories($terms): Collection
     {
@@ -722,7 +721,7 @@ class Post
      *
      * @param int|int[] $terms A category ID or a list of category IDs to add
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function addCategories($terms): Collection
     {
@@ -738,7 +737,7 @@ class Post
      *
      * @param array<string, mixed> $args
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function getTags(array $args = []): Collection
     {
@@ -750,7 +749,7 @@ class Post
      *
      * @param int|int[] $terms A tag ID or a list of tag IDs to set
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function setTags($terms): Collection
     {
@@ -766,7 +765,7 @@ class Post
      *
      * @param int|int[] $terms A tag ID or a list of tag IDs to remove
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function removeTags($terms): Collection
     {
@@ -782,7 +781,7 @@ class Post
      *
      * @param int|int[] $terms A tag ID or a list of tag IDs to add
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function addTags($terms): Collection
     {
@@ -838,14 +837,14 @@ class Post
      *
      * @param array<string, mixed> $options
      *
-     * @throws Exception on failure.
+     * @throws RuntimeException on failure.
      */
     public function update(array $options): bool
     {
         $id = wp_update_post(['ID' => $this->getID()] + $options, true);
 
         if ($id instanceof WP_Error) {
-            throw new Exception($id->get_error_message());
+            throw new RuntimeException($id->get_error_message());
         }
 
         $this->refreshCoreObject();

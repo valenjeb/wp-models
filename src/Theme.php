@@ -6,8 +6,8 @@ namespace Devly\WP\Models;
 
 use Devly\Exceptions\ObjectNotFoundException;
 use Devly\Utils\SmartObject;
-use Exception;
 use InvalidArgumentException;
+use RuntimeException;
 use WP_Theme;
 
 use function is_array;
@@ -194,12 +194,12 @@ class Theme
     /**
      * Returns reference to the parent theme.
      *
-     * @throws Exception if the theme is not a child theme.
+     * @throws RuntimeException if the theme is not a child theme.
      */
     public function getParent(): self
     {
         if (! $this->hasParent()) {
-            throw new Exception(sprintf('Theme "%s" is not a child theme.', $this->getName()));
+            throw new RuntimeException(sprintf('Theme "%s" is not a child theme.', $this->getName()));
         }
 
         if (! isset($this->parentTheme)) {

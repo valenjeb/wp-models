@@ -805,7 +805,7 @@ class Post
      */
     public function getTagList(string $separator = ', '): string
     {
-        return get_the_tag_list('', $separator, '', $this->getID());
+        return (string) get_the_tag_list('', $separator, '', $this->getID());
     }
 
     /**

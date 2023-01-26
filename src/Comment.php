@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Devly\WP\Models;
 
 use Devly\Exceptions\ObjectNotFoundException;
-use Devly\Utils\SmartObject;
 use Illuminate\Support\Collection;
+use Nette\SmartObject;
 use RuntimeException;
 use WP_Comment;
 use WP_Error;
@@ -17,17 +17,23 @@ use function collect;
 /**
  * @property-read int $ID
  * @property-read string $date
- * @property-read string $date_gmt
+ * @property-read string $dateGmt
+ * @property-read string $rawDate
+ * @property-read string $time
  * @property-read string $content
  * @property-read int $karma
  * @property-read bool $approved
- * @property-read int $parent_ID
+ * @property-read int $parentID
  * @property-read ?Comment $parent
- * @property-read int $post_ID
- * @property-read int $author_ID
+ * @property-read int $postID
+ * @property-read int $authorID
  * @property-read User $author
+ * @property-read string $authorName
+ * @property-read string $authorIP
+ * @property-read string $authorUrl
+ * @property-read string $authorEmail
  * @property-read Collection<Comment> $children
- * @property-read WP_Comment $core_object
+ * @property-read WP_Comment $coreObject
  */
 class Comment
 {

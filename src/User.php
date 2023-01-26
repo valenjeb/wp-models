@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Devly\WP\Models;
 
 use Devly\Exceptions\ObjectNotFoundException;
-use Devly\Utils\SmartObject;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
+use Nette\SmartObject;
 use RuntimeException;
 use WP_Error;
 use WP_User;
@@ -21,14 +21,14 @@ use function sprintf;
  * @property-read string $username The user's login username.
  * @property-read string $nicename The URL-friendly username
  * @property-read string $email The user's email address
- * @property-read string $first_name
- * @property-read string $last_name
+ * @property-read string $firstName
+ * @property-read string $lastName
  * @property-read string $password
  * @property-read string $bio
  * @property-read string $website
- * @property-read string $registered_at
- * @property-read string $archive_url The URL to the author page
- * @property-read int $post_count The number of posts user has written.
+ * @property-read string $registeredAt
+ * @property-read string $archiveUrl The URL to the author page
+ * @property-read int $postCount The number of posts user has written.
  * @property-read string[] $roles The roles the user is part of
  */
 class User

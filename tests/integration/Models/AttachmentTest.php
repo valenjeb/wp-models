@@ -37,7 +37,7 @@ class AttachmentTest extends WP_UnitTestCase
 
     public function testGetMimeType(): void
     {
-        $this->assertEquals('image/png', $this->post->mime_type);
+        $this->assertEquals('image/png', $this->post->mimeType);
     }
 
     public function testGetBasename(): void
@@ -73,13 +73,13 @@ class AttachmentTest extends WP_UnitTestCase
 
     public function testGetImageAlt(): void
     {
-        $this->assertEquals('', $this->post->image_alt);
+        $this->assertEquals('', $this->post->altText);
 
         $newAlt = 'Image alt text';
 
-        $this->post->image_alt = $newAlt;
+        $this->post->altText = $newAlt;
 
-        $this->assertEquals($newAlt, $this->post->image_alt);
+        $this->assertEquals($newAlt, $this->post->altText);
     }
 
     public function testGetCaption(): void

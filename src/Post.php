@@ -8,11 +8,11 @@ namespace Devly\WP\Models;
 
 use Devly\Exceptions\ObjectNotFoundException;
 use Devly\Utils\Helpers;
-use Devly\Utils\SmartObject;
 use Devly\WP\Query\PostQuery;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use LogicException;
+use Nette\SmartObject;
 use RuntimeException;
 use Throwable;
 use WP_Comment;
@@ -45,47 +45,47 @@ use const DATE_W3C;
 
 /**
  * @property-read int $ID
- * @property-read string $raw_title The raw post title as stored in the database.
+ * @property-read string $rawTitle The raw post title as stored in the database.
  * @property-read string $title The post title
  * @property-read string $type The post type
  * @property-read string $slug The URL-safe slug, this corresponds to the poorly-named "post_name" in the WP database, ex: "hello-world"
  * @property-read string $status The post status
- * @property-read string $raw_date  DateTime string (0000-00-00 00:00:00)
- * @property-read string $raw_modified_date  DateTime string (0000-00-00 00:00:00)
+ * @property-read string $rawDate  DateTime string (0000-00-00 00:00:00)
+ * @property-read string $rawModifiedDate  DateTime string (0000-00-00 00:00:00)
  * @property-read string $date The formatted post create date
- * @property-read string $create_date The formatted post create date
- * @property-read string $create_date_w3c The post create date (0000-00-00T00:00:00+00:00)
- * @property-read string $modified_date The formatted post modified date
- * @property-read string $modified_date_w3c The post modified date (0000-00-00T00:00:00+00:00)
- * @property-read int $create_timestamp The post create timestamp
- * @property-read int $modified_timestamp The post modified timestamp
+ * @property-read string $createDate The formatted post create date
+ * @property-read string $createDateW3c The post create date (0000-00-00T00:00:00+00:00)
+ * @property-read string $modifiedDate The formatted post modified date
+ * @property-read string $modifiedDateW3c The post modified date (0000-00-00T00:00:00+00:00)
+ * @property-read int $createTimestamp The post create timestamp
+ * @property-read int $modifiedTimestamp The post modified timestamp
  * @property-read string $time The formatted post create time
- * @property-read string $time_modified The formatted post modified time
- * @property-read string $raw_content The raw post content as stored in the database.
+ * @property-read string $timeModified The formatted post modified time
+ * @property-read string $rawContent The raw post content as stored in the database.
  * @property-read string $content The post content.
- * @property-read string $raw_excerpt The raw post excerpt as stored in the database.
+ * @property-read string $rawExcerpt The raw post excerpt as stored in the database.
  * @property-read string $excerpt The post excerpt.
- * @property-read ?int $thumbnail_id The post thumbnail ID
+ * @property-read ?int $thumbnailID The post thumbnail ID
  * @property-read ?Attachment $thumbnail
- * @property-read string $css_class
- * @property-read ?int $parent_id
+ * @property-read string $cssClass
+ * @property-read ?int $parentID
  * @property-read ?self $parent
  * @property-read User $author
- * @property-read int $author_id
- * @property-read string $edit_link
+ * @property-read int $authorID
+ * @property-read string $editLink
  * @property-read string $permalink
- * @property-read ?Post $previous_post
- * @property-read ?Post $next_post
- * @property-read int $comment_count
- * @property-read string $comment_status
- * @property-read bool $comments_open
+ * @property-read ?Post $previousPost
+ * @property-read ?Post $nextPost
+ * @property-read int $commentCount
+ * @property-read string $commentStatus
+ * @property-read bool $commentsOpen
  * @property-read string $format
  * @property-read Collection<Category> $categories
  * @property-read Collection<Tag> $tags
- * @property-read string $tag_list
- * @property-read string $category_list
+ * @property-read string $tagList
+ * @property-read string $categoryList
  * @property-read string $password
- * @property-read bool $password_required
+ * @property-read bool $passwordRequired
  */
 class Post
 {
@@ -95,7 +95,7 @@ class Post
     public static string $postType = 'post';
     protected Attachment $postThumbnail;
     protected ?self $postParent;
-    protected User $postAuthor;
+    protected User $author;
     /** @var Post|false */
     protected $previousPost;
     /** @var Post|false */
@@ -241,14 +241,14 @@ class Post
         }
     }
 
-    public function getThumbnailId(): ?int
+    public function getThumbnailID(): ?int
     {
         return get_post_thumbnail_id($this->getCoreObject()) ?: null;
     }
 
     public function hasThumbnail(): bool
     {
-        return $this->getThumbnailId() !== null;
+        return $this->getThumbnailID() !== null;
     }
 
     public function getThumbnail(): ?Attachment
@@ -258,7 +258,7 @@ class Post
         }
 
         if (! isset($this->postThumbnail)) {
-            $this->postThumbnail = new Attachment($this->getThumbnailId());
+            $this->postThumbnail = new Attachment($this->getThumbnailID());
         }
 
         return $this->postThumbnail;
@@ -308,7 +308,7 @@ class Post
         return implode(' ', get_post_class($class, $this->getCoreObject()));
     }
 
-    public function getParentId(): ?int
+    public function getParentID(): ?int
     {
         return $this->getCoreObject()->post_parent ?: null;
     }
@@ -322,7 +322,7 @@ class Post
         if (! isset($this->postParent)) {
             $className = static::class;
 
-            $this->postParent = new $className($this->getParentId());
+            $this->postParent = new $className($this->getParentID());
         }
 
         return $this->postParent;
@@ -330,7 +330,7 @@ class Post
 
     public function hasParent(): bool
     {
-        return $this->getParentId() !== null;
+        return $this->getParentID() !== null;
     }
 
     public function isChild(): bool
@@ -438,14 +438,14 @@ class Post
 
     public function getAuthor(): User
     {
-        if (! isset($this->postAuthor)) {
-            $this->postAuthor = new User($this->getAuthorId());
+        if (! isset($this->author)) {
+            $this->author = new User($this->getAuthorID());
         }
 
-        return $this->postAuthor;
+        return $this->author;
     }
 
-    public function getAuthorId(): int
+    public function getAuthorID(): int
     {
         return (int) $this->getCoreObject()->post_author;
     }

@@ -10,13 +10,11 @@ use WP_UnitTestCase;
 
 class MultisiteTest extends WP_UnitTestCase
 {
-    protected Site $theme;
+    protected Site $site1;
     protected Site $site2;
 
     protected function setUp(): void
     {
-        $sites = get_sites(['fields' => 'ids']);
-
         $sites       = $this->factory()->blog->create_many(2);
         $this->site1 = new Site();
         $this->site2 = new Site($sites[0]);

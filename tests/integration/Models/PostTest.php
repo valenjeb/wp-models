@@ -20,9 +20,7 @@ use function preg_match;
 class PostTest extends WP_UnitTestCase
 {
     protected ?Post $post;
-    /**
-     * @var int[]
-     */
+    /** @var int[] */
     protected array $posts;
 
     protected function setUp(): void
@@ -36,7 +34,7 @@ class PostTest extends WP_UnitTestCase
         ]);
 
         $this->posts = $posts;
-        $this->post = new Post($posts[2]);
+        $this->post  = new Post($posts[2]);
     }
 
     public function testInsertAndDeletePost(): void
@@ -97,8 +95,8 @@ class PostTest extends WP_UnitTestCase
 
     public function testGetTimestamp(): void
     {
-        $this->assertIsInt($this->post->create_timestamp);
-        $this->assertIsInt($this->post->modified_timestamp);
+        $this->assertIsInt($this->post->createTimestamp);
+        $this->assertIsInt($this->post->modifiedTimestamp);
     }
 
     public function testGetDateW3C(): void
@@ -110,7 +108,7 @@ class PostTest extends WP_UnitTestCase
 
         $this->assertMatchesRegularExpression(
             '/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\+[0-9]{2}:[0-9]{2}/',
-            $this->post->create_date_w3c
+            $this->post->createDateW3c
         );
 
         $this->assertMatchesRegularExpression(
@@ -120,7 +118,7 @@ class PostTest extends WP_UnitTestCase
 
         $this->assertMatchesRegularExpression(
             '/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\+[0-9]{2}:[0-9]{2}/',
-            $this->post->modified_date_w3c
+            $this->post->modifiedDateW3c
         );
     }
 
@@ -231,15 +229,15 @@ class PostTest extends WP_UnitTestCase
 
     public function testGetPreviousAndNextPost(): void
     {
-        $previous = $this->post->previous_post;
+        $previous = $this->post->previousPost;
 
-        $this->assertNull($this->post->next_post);
+        $this->assertNull($this->post->nextPost);
         $this->assertInstanceOf(Post::class, $previous);
         $this->assertSame($previous, $this->post->getPreviousPost());
 
-        $next = $previous->next_post;
+        $next = $previous->nextPost;
         $this->assertInstanceOf(Post::class, $next);
-        $this->assertEquals($previous->ID, $next->previous_post->ID);
+        $this->assertEquals($previous->ID, $next->previousPost->ID);
     }
 
     public function testGetAndSetPostThumbnail(): void

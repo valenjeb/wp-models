@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Devly\WP\Models;
 
 use Devly\Exceptions\ObjectNotFoundException;
-use Devly\Utils\SmartObject;
+use Nette\SmartObject;
 use RuntimeException;
 use WP_Network;
 use WP_Site;
@@ -16,7 +16,7 @@ use function sprintf;
 /**
  * @property-read int $ID
  * @property-read array $sites
- * @property-read WP_Network $core_object
+ * @property-read WP_Network $coreObject
  */
 class Network
 {

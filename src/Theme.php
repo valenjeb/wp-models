@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Devly\WP\Models;
 
 use Devly\Exceptions\ObjectNotFoundException;
-use Devly\Utils\SmartObject;
 use InvalidArgumentException;
+use Nette\SmartObject;
 use RuntimeException;
 use WP_Theme;
 
@@ -17,7 +17,7 @@ use function sprintf;
 /**
  * @property-read string $name The theme name
  * @property-read string $description The theme description
- * @property-read string $text_domain The theme text domain
+ * @property-read string $textDomain The theme text domain
  * @property-read string $version
  * @property-read string $slug
  * @property-read string $url

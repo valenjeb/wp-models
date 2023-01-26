@@ -24,6 +24,7 @@ class SiteTest extends WP_UnitTestCase
     public function testGetBlogInfo(): void
     {
         $this->assertEquals('Test Blog', $this->site->info('name'));
+        $this->assertEquals('Test Blog', $this->site->name);
     }
 
     public function testGetNetworkThrowLogicError(): void

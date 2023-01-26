@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Devly\WP\Models;
 
 use Devly\Exceptions\ObjectNotFoundException;
-use Devly\Utils\SmartObject;
+use Nette\SmartObject;
 use RuntimeException;
 use WP_Error;
 use WP_Post;
@@ -21,25 +21,26 @@ use const PATHINFO_FILENAME;
 /**
  * @property-read int $ID
  * @property-read string $url
- * @property string $image_alt
+ * @property string $altText
  * @property string $title
  * @property string $description
  * @property string $caption
  * @property-read string $basename
  * @property-read string $filename
  * @property-read string $extension
- * @property-read string $mime_type
+ * @property-read string $mimeType
+ * @property-read WP_Post $coreObject
  */
 class Attachment
 {
     use SmartObject;
 
     protected WP_Post $coreObject;
-    protected string $fileUrl;
-    protected string $filePath;
-    protected string $fileBasename;
-    protected string $attachmentFilename;
-    protected string $fileExtension;
+    protected string $url;
+    protected string $path;
+    protected string $basename;
+    protected string $filename;
+    protected string $extension;
 
     public function __construct(int $id)
     {
@@ -135,12 +136,12 @@ class Attachment
     /**
      * Retrieves the attachment description alt.
      */
-    public function getImageAlt(): string
+    public function getAltText(): string
     {
         return $this->getField('_wp_attachment_image_alt') ?: '';
     }
 
-    public function setImageAlt(string $text): self
+    public function setAltText(string $text): self
     {
         $this->setField('_wp_attachment_image_alt', $text);
 
@@ -152,11 +153,11 @@ class Attachment
      */
     public function getUrl(): string
     {
-        if (! isset($this->fileUrl)) {
-            $this->fileUrl = wp_get_attachment_url($this->getID()) ?: '';
+        if (! isset($this->url)) {
+            $this->url = wp_get_attachment_url($this->getID()) ?: '';
         }
 
-        return $this->fileUrl;
+        return $this->url;
     }
 
     /**
@@ -164,11 +165,11 @@ class Attachment
      */
     public function getPath(): string
     {
-        if (! isset($this->filePath)) {
-            $this->filePath = get_attached_file($this->getID()) ?: '';
+        if (! isset($this->path)) {
+            $this->path = get_attached_file($this->getID()) ?: '';
         }
 
-        return $this->filePath;
+        return $this->path;
     }
 
     /**
@@ -176,11 +177,11 @@ class Attachment
      */
     public function getFilename(): string
     {
-        if (! isset($this->attachmentFilename)) {
-            $this->attachmentFilename = pathinfo($this->getPath(), PATHINFO_FILENAME);
+        if (! isset($this->filename)) {
+            $this->filename = pathinfo($this->getPath(), PATHINFO_FILENAME);
         }
 
-        return $this->attachmentFilename;
+        return $this->filename;
     }
 
     /**
@@ -188,11 +189,11 @@ class Attachment
      */
     public function getBasename(): string
     {
-        if (! isset($this->fileBasename)) {
-            $this->fileBasename = pathinfo($this->getPath(), PATHINFO_BASENAME);
+        if (! isset($this->basename)) {
+            $this->basename = pathinfo($this->getPath(), PATHINFO_BASENAME);
         }
 
-        return $this->fileBasename;
+        return $this->basename;
     }
 
     /**
@@ -200,11 +201,11 @@ class Attachment
      */
     public function getExtension(): string
     {
-        if (! isset($this->fileExtension)) {
-            $this->fileExtension = pathinfo($this->getPath(), PATHINFO_EXTENSION);
+        if (! isset($this->extension)) {
+            $this->extension = pathinfo($this->getPath(), PATHINFO_EXTENSION);
         }
 
-        return $this->fileExtension;
+        return $this->extension;
     }
 
     public function getMimeType(): string
@@ -351,7 +352,7 @@ class Attachment
         return [
             'ID' => $this->getID(),
             'title' => $this->getTitle(),
-            'alt' => $this->getImageAlt(),
+            'alt' => $this->getAltText(),
             'description' => $this->getDescription(),
             'caption' => $this->getCaption(),
             'path' => $this->getPath(),

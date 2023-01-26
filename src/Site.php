@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Devly\WP\Models;
 
 use Devly\Exceptions\ObjectNotFoundException;
-use Devly\Utils\SmartObject;
 use LogicException;
+use Nette\SmartObject;
 use WP_Site;
 
 use function func_get_args;
@@ -20,15 +20,15 @@ use function sprintf;
  * @property-read string $description The site tagline (set in Settings > General)
  * @property-read string $wpurl The WordPress address (URL) (set in Settings > General)
  * @property-read string $url The Site address (URL) (set in Settings > General)
- * @property-read string $admin_url
- * @property-read string $admin_email Admin email (set in Settings > General)
+ * @property-read string $adminUrl
+ * @property-read string $adminEmail Admin email (set in Settings > General)
  * @property-read string $charset The "Encoding for pages and feeds"  (set in Settings > Reading)
  * @property-read string $version The current WordPress version
- * @property-read string $text_direction The text direction determined by the site's language.
- * @property-read string $language Language code for the current site
+ * @property-read string $textDirection The text direction determined by the site's language.
+ * @property-read string $lang Language code for the current site
  * @property-read bool   $multisite Whether multisite is enabled.
- * @property-read string $body_class A list of the class names for the body element
- * @property-read string $network_id
+ * @property-read string $bodyClass A list of the class names for the body element
+ * @property-read string $networkID
  * @property-read Network $network
  */
 class Site
@@ -85,7 +85,7 @@ class Site
      *
      * @throws LogicException if the current WordPress installation is not multisite.
      */
-    public function getNetworkId(): int
+    public function getNetworkID(): int
     {
         $this->forceMultisite();
 

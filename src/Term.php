@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Devly\WP\Models;
 
 use Devly\Exceptions\ObjectNotFoundException;
-use Devly\Utils\SmartObject;
 use Devly\WP\Query\TermQuery;
 use Illuminate\Support\Collection;
 use LogicException;
+use Nette\SmartObject;
 use RuntimeException;
 use WP_Error;
 use WP_Term;
@@ -27,7 +27,8 @@ use function ucfirst;
  * @property-read string $link The term URL
  * @property-read string $url The term URL
  * @property-read int $count The term associated objects count
- * @property-read int $parent_id The term parent ID
+ * @property-read array $fields List of all meta fields
+ * @property-read int $parentID The term parent ID
  * @property-read ?Term $parent The term parent object
  */
 abstract class Term

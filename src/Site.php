@@ -26,6 +26,7 @@ use function sprintf;
  * @property-read string $version The current WordPress version
  * @property-read string $textDirection The text direction determined by the site's language.
  * @property-read string $lang Language code for the current site
+ * @property-read string $language Language code for the current site
  * @property-read bool   $multisite Whether multisite is enabled.
  * @property-read string $bodyClass A list of the class names for the body element
  * @property-read string $networkID
@@ -184,6 +185,11 @@ class Site
     public function getLanguage(): string
     {
         return (string) $this->info('language');
+    }
+
+    public function getLang(): string
+    {
+        return $this->getLanguage();
     }
 
     public function isMultisite(): bool

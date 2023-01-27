@@ -26,8 +26,9 @@ use function sprintf;
  * @property-read ?string $template The directory name of the theme's "stylesheet" files, inside the theme root.
  * @property-read self $parent Reference to the parent theme.
  * @property-read bool $active Whether the theme is active
- * @property-read ?Attachment $customLogo
- * @property-read int $customLogoID
+ * @property-read ?Attachment $logo
+ * @property-read int $logoID
+ * @property-read string $logoHtml
  */
 class Theme
 {
@@ -211,22 +212,22 @@ class Theme
         return $this->parentTheme;
     }
 
-    public function hasCustomLogo(): bool
+    public function hasLogo(): bool
     {
         return (bool) $this->getOption('custom_logo');
     }
 
-    public function getCustomLogoID(): int
+    public function getLogoID(): int
     {
         return (int) $this->getOption('custom_logo');
     }
 
-    public function getCustomLogo(): ?Attachment
+    public function getLogo(): ?Attachment
     {
-        return $this->hasCustomLogo() ? new Attachment($this->getCustomLogoID()) : null;
+        return $this->hasLogo() ? new Attachment($this->getLogoID()) : null;
     }
 
-    public function getCustomLogoHtml(): string
+    public function getLogoHtml(): string
     {
         return get_custom_logo();
     }

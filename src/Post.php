@@ -39,11 +39,9 @@ use function is_array;
 use function is_int;
 use function is_object;
 use function sprintf;
-use function trigger_error;
 use function wp_insert_post;
 
 use const DATE_W3C;
-use const E_USER_DEPRECATED;
 
 /**
  * @property-read int $ID
@@ -54,15 +52,10 @@ use const E_USER_DEPRECATED;
  * @property-read string $status The post status
  * @property-read string $rawDate  DateTime string (0000-00-00 00:00:00)
  * @property-read string $rawDateModified DateTime string (0000-00-00 00:00:00)
- * @property-read string $rawModifiedDate  DateTime string (0000-00-00 00:00:00)
  * @property-read string $date The formatted post create date
  * @property-read string $dateModified The formatted post modified date
  * @property-read string $dateW3c The post create date (0000-00-00T00:00:00+00:00)
  * @property-read string $dateModifiedW3c The post modified date (0000-00-00T00:00:00+00:00)
- * @property-read string $createDate The formatted post create date
- * @property-read string $createDateW3c The post create date (0000-00-00T00:00:00+00:00)
- * @property-read string $modifiedDate The formatted post modified date
- * @property-read string $modifiedDateW3c The post modified date (0000-00-00T00:00:00+00:00)
  * @property-read int $createTimestamp The post create timestamp
  * @property-read int $modifiedTimestamp The post modified timestamp
  * @property-read string $time The formatted post create time
@@ -396,34 +389,6 @@ class Post
     }
 
     /**
-     * Alias to getDate()
-     *
-     * @return string|int
-     */
-    public function getCreateDate(string $format = '')
-    {
-        return $this->getDate($format);
-    }
-
-    /**
-     * Returns the post create date in "Y-m-d\TH:i:sP" format
-     *
-     * @deprecated
-     */
-    public function getCreateDateW3c(): string
-    {
-        $message = sprintf(
-            'Method %s is deprecated and will be removed in v1.0. Use %s::getDateW3c instead.',
-            __METHOD__,
-            self::class
-        );
-
-        trigger_error($message, E_USER_DEPRECATED);
-
-        return $this->getDate(DATE_W3C);
-    }
-
-    /**
      * Returns the post create date in "Y-m-d\TH:i:sP" format
      */
     public function getDateW3c(): string
@@ -433,28 +398,10 @@ class Post
 
     /**
      * Returns the post modified date in "Y-m-d\TH:i:sP" format
-     *
-     * @deprecated
-     */
-    public function getModifiedDateW3c(): string
-    {
-        $message = sprintf(
-            'Method %s is deprecated and will be removed in v1.0. Use %s::getDateModifiedW3c instead.',
-            __METHOD__,
-            self::class
-        );
-
-        trigger_error($message, E_USER_DEPRECATED);
-
-        return $this->getCreateDate(DATE_W3C);
-    }
-
-    /**
-     * Returns the post modified date in "Y-m-d\TH:i:sP" format
      */
     public function getDateModifiedW3c(): string
     {
-        return $this->getCreateDate(DATE_W3C);
+        return $this->getDate(DATE_W3C);
     }
 
     public function getCreateTimestamp(): int
@@ -464,29 +411,7 @@ class Post
 
     public function getModifiedTimestamp(): int
     {
-        return $this->getModifiedDate('U');
-    }
-
-    /**
-     * Retrieve formatted date on which the post was last modified.
-     *
-     * @deprecated
-     *
-     * @param string $format PHP date format. Defaults to the 'date_format' option.
-     *
-     * @return string|int
-     */
-    public function getModifiedDate(string $format = '')
-    {
-        $message = sprintf(
-            'Method %s is deprecated and will be removed in v1.0. Use %s::getDateModified instead.',
-            __METHOD__,
-            self::class
-        );
-
-        trigger_error($message, E_USER_DEPRECATED);
-
-        return get_the_modified_date($format, $this->getCoreObject());
+        return $this->getDateModified('U');
     }
 
     /**
@@ -499,24 +424,6 @@ class Post
     public function getDateModified(string $format = '')
     {
         return get_the_modified_date($format, $this->getCoreObject());
-    }
-
-    /**
-     * Get the post modification date in DateTime string (0000-00-00 00:00:00) format
-     *
-     * @deprecated
-     */
-    public function getRawModifiedDate(): string
-    {
-        $message = sprintf(
-            'Method %s is deprecated and will be removed in v1.0. Use %s::getRawDateModified instead.',
-            __METHOD__,
-            self::class
-        );
-
-        trigger_error($message, E_USER_DEPRECATED);
-
-        return $this->getCoreObject()->post_modified;
     }
 
     /**

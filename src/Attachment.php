@@ -135,14 +135,33 @@ class Attachment
 
     /**
      * Retrieves the attachment description alt.
+     *
+     * @throws RuntimeException if the current attachment object is not an image.
      */
     public function getAltText(): string
     {
+        $type = explode('/', $this->getMimeType())[0];
+
+        if ($type !== 'image') {
+            throw new RuntimeException(sprintf('Attachment "%s" is not an image.', $this->getID()));
+        }
+
         return $this->getField('_wp_attachment_image_alt') ?: '';
     }
 
+    /**
+     * Sets the attachment description alt.
+     *
+     * @throws RuntimeException if the current attachment object is not an image.
+     */
     public function setAltText(string $text): self
     {
+        $type = explode('/', $this->getMimeType())[0];
+
+        if ($type !== 'image') {
+            throw new RuntimeException(sprintf('Attachment "%s" is not an image.', $this->getID()));
+        }
+
         $this->setField('_wp_attachment_image_alt', $text);
 
         return $this;

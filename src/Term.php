@@ -340,6 +340,9 @@ abstract class Term
     /** @param array<string, mixed> $query */
     public static function query(array $query = []): TermQuery
     {
-        return TermQuery::create($query)->whereTaxonomy(self::getTaxonomy());
+        $query = TermQuery::create($query)->whereTaxonomy(self::getTaxonomy());
+        $query->setReturnType(static::class);
+
+        return $query;
     }
 }

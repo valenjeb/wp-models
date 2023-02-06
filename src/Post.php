@@ -152,7 +152,7 @@ class Post
      */
     public function getType(): string
     {
-        return self::$postType;
+        return static::$postType;
     }
 
     /**

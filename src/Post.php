@@ -947,7 +947,7 @@ class Post
             throw new RuntimeException($id->get_error_message());
         }
 
-        return new self($id);
+        return new static($id);
     }
 
     public function getCommentCount(): int

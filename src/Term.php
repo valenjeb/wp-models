@@ -29,7 +29,7 @@ use function ucfirst;
  * @property-read int $count The term associated objects count
  * @property-read array $fields List of all meta fields
  * @property-read int $parentID The term parent ID
- * @property-read ?Term $parent The term parent object
+ * @property-read ?static $parent The term parent object
  */
 abstract class Term
 {
@@ -39,6 +39,7 @@ abstract class Term
 
     protected WP_Term $coreObject;
 
+    /** @var static|null */
     protected ?Term $termParent = null;
 
     /**
@@ -128,7 +129,8 @@ abstract class Term
         return $this->getParentId() !== null;
     }
 
-    public function getParent(): ?Term
+    /** @return static */
+    public function getParent(): ?self
     {
         if (! $this->hasParent()) {
             return null;
@@ -251,6 +253,7 @@ abstract class Term
         throw new RuntimeException($err);
     }
 
+    /** @return static */
     public static function insert(string $name): self
     {
         switch (self::getTaxonomy()) {
@@ -268,7 +271,7 @@ abstract class Term
             throw new RuntimeException($result->get_error_message());
         }
 
-        return static::getByName($name);
+        return self::getByName($name);
     }
 
     public static function all(bool $format = true): Collection
@@ -297,8 +300,12 @@ abstract class Term
             ->get(static::class);
     }
 
-    /** @throws ObjectNotFoundException */
-    public static function getByName(string $name): Term
+    /**
+     * @return static
+     *
+     * @throws ObjectNotFoundException
+     */
+    public static function getByName(string $name): self
     {
         $term = get_term_by('name', $name, self::getTaxonomy());
 
@@ -317,8 +324,12 @@ abstract class Term
         return new static($term);
     }
 
-    /** @throws ObjectNotFoundException */
-    public static function getBySlug(string $slug): Term
+    /**
+     * @return static
+     *
+     * @throws ObjectNotFoundException
+     */
+    public static function getBySlug(string $slug): self
     {
         $term = get_term_by('slug', $slug, self::getTaxonomy());
 

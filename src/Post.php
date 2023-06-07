@@ -68,14 +68,14 @@ use const DATE_W3C;
  * @property-read ?Attachment $thumbnail
  * @property-read string $cssClass
  * @property-read ?int $parentID
- * @property-read ?self $parent
+ * @property-read ?static $parent
  * @property-read User $author
  * @property-read int $authorID
  * @property-read string $editLink
  * @property-read string $permalink
  * @property-read string $url
- * @property-read ?Post $previousPost
- * @property-read ?Post $nextPost
+ * @property-read ?static $previousPost
+ * @property-read ?static $nextPost
  * @property-read int $commentCount
  * @property-read string $commentStatus
  * @property-read bool $commentsOpen
@@ -94,18 +94,21 @@ class Post
     protected WP_Post $coreObject;
     public static string $postType = 'post';
     protected Attachment $postThumbnail;
+    /** @var static|null  */
     protected ?self $postParent;
     protected User $author;
-    /** @var Post|false */
+    /** @var static|false */
     protected $previousPost;
-    /** @var Post|false */
+    /** @var static|false */
     protected $nextPost;
 
     /**
      * @param int|WP_Post $post Post ID or post object. `0` values return
      *                          the current global post inside the loop.
      *
+     * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
+     * @throws LogicException
      */
     public function __construct($post = 0)
     {
@@ -268,6 +271,8 @@ class Post
      * Set the post thumbnail
      *
      * @param int|WP_Post|Attachment $attachment
+     *
+     * @return static
      */
     public function setThumbnail($attachment): self
     {
@@ -318,6 +323,7 @@ class Post
         return $this->getCoreObject()->post_parent ?: null;
     }
 
+    /** @return static|null */
     public function getParent(): ?self
     {
         if (! $this->hasParent()) {
@@ -856,7 +862,7 @@ class Post
      * @param bool $format Whether to return list of WP_Post objects
      *                     or Devly\Database\Models\Post objects.
      *
-     * @return Collection<WP_Post|self> Post collection
+     * @return Collection<WP_Post|static> Post collection
      */
     public static function all(bool $format = true): Collection
     {
@@ -867,6 +873,8 @@ class Post
 
     /**
      * Find a post by its slug
+     *
+     * @return static
      *
      * @throws ObjectNotFoundException if No post found with associated slug.
      */
@@ -922,6 +930,8 @@ class Post
      * Insert or update a post.
      *
      * @param string|array<string, mixed> $titleOrPostData
+     *
+     * @return static
      */
     public static function insert(
         $titleOrPostData,

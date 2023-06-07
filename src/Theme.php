@@ -214,7 +214,7 @@ class Theme
 
     public function hasLogo(): bool
     {
-        return (bool) $this->getOption('custom_logo');
+        return ! empty($this->getLogoID());
     }
 
     public function getLogoID(): int

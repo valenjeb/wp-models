@@ -7,12 +7,12 @@ declare(strict_types=1);
 namespace Devly\WP\Models;
 
 use Devly\Exceptions\ObjectNotFoundException;
-use Devly\Utils\Helpers;
 use Devly\WP\Query\PostQuery;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use LogicException;
 use Nette\SmartObject;
+use Nette\Utils\Helpers;
 use RuntimeException;
 use Throwable;
 use WP_Comment;

@@ -14,7 +14,7 @@
     }
   },
   "require": {
-    "php": ">=7.4",
+    "php": ">=8.0",
     "devly/utils": "dev-master",
     "devly/wp-query": "dev-master",
     "illuminate/collections": "^8.83",

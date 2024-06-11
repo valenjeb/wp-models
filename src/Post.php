@@ -12,9 +12,7 @@ use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use LogicException;
 use Nette\SmartObject;
-use Nette\Utils\Helpers;
 use RuntimeException;
-use Throwable;
 use WP_Comment;
 use WP_Error;
 use WP_Post;
@@ -32,6 +30,8 @@ use function get_post;
 use function get_post_class;
 use function get_post_status;
 use function get_post_thumbnail_id;
+use function get_the_content;
+use function get_the_excerpt;
 use function get_the_title;
 use function gettype;
 use function implode;
@@ -196,22 +196,21 @@ class Post
 
     public function getContent(?string $moreLinkText = null, bool $stripTeaser = false): string
     {
-        try {
-            return Helpers::capture(function () use ($moreLinkText, $stripTeaser): void {
-                $post            = $GLOBALS['post'] ?? null;
-                $GLOBALS['post'] = $this->getCoreObject();
+        $content = get_the_content($moreLinkText, $stripTeaser, $this->getCoreObject());
 
-                the_content($moreLinkText, $stripTeaser);
+        $globalPost = $GLOBALS['post'];
+        $GLOBALS['post'] = $this->getCoreObject();
 
-                if ($post) {
-                    $GLOBALS['post'] = $post;
-                } else {
-                    unset($GLOBALS['post']);
-                }
-            });
-        } catch (Throwable $e) {
-            throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
-        }
+        /**
+         * Filters the post content.
+         *
+         * @param string $content Content of the current post.
+         */
+        $content = apply_filters( 'the_content', $content );
+
+        $GLOBALS['post'] = $globalPost;
+
+        return str_replace( ']]>', ']]&gt;', $content );
     }
 
     public function getRawContent(): string
@@ -226,22 +225,21 @@ class Post
 
     public function getExcerpt(): string
     {
-        try {
-            return Helpers::capture(function (): void {
-                $post            = $GLOBALS['post'] ?? null;
-                $GLOBALS['post'] = $this->getCoreObject();
+        $excerpt = get_the_excerpt($this->getCoreObject());
 
-                the_excerpt();
+        $globalPost = $GLOBALS['post'];
+        $GLOBALS['post'] = $this->getCoreObject();
 
-                if ($post) {
-                    $GLOBALS['post'] = $post;
-                } else {
-                    unset($GLOBALS['post']);
-                }
-            });
-        } catch (Throwable $e) {
-            throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
-        }
+        /**
+         * Filters the displayed post excerpt.
+         *
+         * @param string $excerpt The post excerpt.
+         */
+        $excerpt = apply_filters('the_excerpt', $excerpt);
+
+        $GLOBALS['post'] = $globalPost;
+
+        return $excerpt;
     }
 
     public function getThumbnailID(): ?int

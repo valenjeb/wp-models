@@ -200,6 +200,7 @@ class Post
 
         $globalPost = $GLOBALS['post'];
         $GLOBALS['post'] = $this->getCoreObject();
+        $content = get_the_content($moreLinkText, $stripTeaser, $this->getCoreObject());
 
         /**
          * Filters the post content.
